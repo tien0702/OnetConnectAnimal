@@ -23,7 +23,7 @@ namespace TT
             return money.ToString();
         }
 
-        public string ConvertToHH_MM_DD(int totalSeconds)
+        public static string ConvertToHH_MM_DD(int totalSeconds)
         {
             int hours = totalSeconds / 3600;
             int minutes = (totalSeconds % 3600) / 60;
