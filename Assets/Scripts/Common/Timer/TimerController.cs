@@ -14,6 +14,7 @@ public class TimerController : MonoBehaviour
 
     [field: SerializeField] public double Seconds { private set; get; }
     [SerializeField] protected TextMeshProUGUI _timeTxt;
+    [SerializeField] protected bool _pause = false;
 
     protected virtual void Awake()
     {
@@ -22,7 +23,7 @@ public class TimerController : MonoBehaviour
 
     public virtual bool Init(double seconds)
     {
-        if(seconds < 0) seconds = 0;
+        if (seconds < 0) seconds = 0;
 
         this.Seconds = seconds;
 
@@ -31,19 +32,27 @@ public class TimerController : MonoBehaviour
         return true;
     }
 
+    public void Pause()
+    {
+        _pause = true;
+    }
+
+    public void Resume()
+    {
+        _pause = false;
+    }
+
     protected virtual void Update()
     {
-        if (Seconds <= 0) return;
+        if (Seconds <= 0 || _pause) return;
         Seconds -= Time.deltaTime;
 
-        if(_timeTxt != null)
+        if (_timeTxt != null)
             _timeTxt.text = "Time: " + Utilities.ConvertToHH_MM_DD((int)Seconds);
 
-        if(Seconds <= 0)
+        if (Seconds <= 0)
         {
             Events.Notify(TimerEvent.OnTimerEnd, Seconds);
         }
     }
-
-
 }

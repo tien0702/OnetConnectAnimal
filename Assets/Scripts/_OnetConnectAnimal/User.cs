@@ -14,7 +14,7 @@ public class UserData
 
 public class User : Singleton<User>
 {
-    public string Path => Application.streamingAssetsPath + "/UserData.json";
+    public string Path => Application.streamingAssetsPath + "/user-data.json";
 
     public UserData Data { private set; get; }
 

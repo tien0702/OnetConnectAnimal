@@ -6,7 +6,7 @@ namespace TT
 {
     public class SingletonBehaviour<T> : MonoBehaviour where T : Component
     {
-        private static T _instance;
+        protected static T _instance;
         public static T Instance
         {
             get

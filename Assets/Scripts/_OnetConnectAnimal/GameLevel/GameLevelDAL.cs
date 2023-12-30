@@ -1,27 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using TT;
 using UnityEngine;
 
-public class GameLevelDAL
+public class GameLevelDAL : SingleDAL
 {
-    GameLevelInfo[] infos;
     public GameLevelDAL()
     {
-        int countLevels = 3;
-        infos = new GameLevelInfo[countLevels];
-        for(int i = 0; i < countLevels; i++)
-        {
-            infos[i] = new GameLevelInfo() { Time = 1000 * (i + 1), AnimalIDs = new int[] { 1, 2, 3 } };
-        }
+        this.LoadData("game-levels");
     }
 
     public GameLevelInfo GetGameLevelInfo(int level)
     {
-        return infos[level];
+        return this.GetData<GameLevelInfo>(level-1);
     }
 
     public GameLevelInfo[] GetGameLevelInfos()
     {
-        return infos;
+        return GetDatas<GameLevelInfo>();
     }
 }

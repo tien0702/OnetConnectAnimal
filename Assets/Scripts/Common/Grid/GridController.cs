@@ -12,7 +12,7 @@ public class GridInfo
     public bool UseCellPrefabSize;
     public string CellPrefabPath;
 
-    public CellInfo[] CellInfos;
+    public int[] CellInfos;
 }
 
 public class GridController : MonoBehaviour
@@ -29,13 +29,10 @@ public class GridController : MonoBehaviour
         this.Info = info;
         _cellPrefab = Resources.Load<CellController>(info.CellPrefabPath);
 
-
         if (_cells == null || _cells.Count == 0)
         {
             GenerateGrid();
         }
-
-        GenerateCellItems();
         return true;
     }
 
@@ -49,6 +46,42 @@ public class GridController : MonoBehaviour
         int index = x * (int)Info.GridSize.y + y;
 
         return _cells[index];
+    }
+
+    public CellController GetCell(Vector2Int pos)
+    {
+        if (pos.x < 0 || pos.x >= Info.GridSize.x || pos.y < 0 || pos.y >= Info.GridSize.y)
+        {
+            Debug.Log("Out of index");
+            return null;
+        }
+        int index = pos.x * (int)Info.GridSize.y + pos.y;
+
+        return _cells[index];
+    }
+
+    public virtual void RemoveAt(Vector2Int pos)
+    {
+        var cell = this.GetCell(pos);
+        if(cell == null)
+        {
+            return;
+        }
+        int index = pos.x * (int)Info.GridSize.y + pos.y;
+        Destroy(cell.gameObject);
+        _cells[index] = null;
+    }
+
+    public virtual void AddAt(int x, int y, CellController cell)
+    {
+        if (x < 0 || x >= Info.GridSize.x || y < 0 || y >= Info.GridSize.y)
+        {
+            Debug.Log("Out of index");
+            return;
+        }
+        int index = x * (int)Info.GridSize.y + y;
+
+        _cells[index] = cell;
     }
 
     protected virtual void GenerateGrid()
@@ -90,13 +123,6 @@ public class GridController : MonoBehaviour
 
     protected virtual void GenerateCellItems()
     {
-        if (Info.CellInfos == null || Info.CellInfos.Length == 0)
-        {
-            int amount = (int)(Info.GridSize.x * Info.GridSize.y);
-            CellInfo[] cellInfos = Enumerable.Repeat<CellInfo>(new CellInfo(), amount).ToArray();
-            Info.CellInfos = cellInfos;
-        }
-
         for (int i = 0; i < _cells.Count; i++)
         {
             _cells[i].Init(Info.CellInfos[i]);

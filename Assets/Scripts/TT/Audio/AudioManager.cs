@@ -1,38 +1,78 @@
 using UnityEngine;
 using System;
+using System.IO;
+using Unity.VisualScripting;
 
 namespace TT
 {
+    [System.Serializable]
+    public class AudioConfig
+    {
+        public float MusicVolume = 1.0f;
+        public bool MuteMusic = false;
+
+        public float SfxVolume = 1.0f;
+        public bool MuteSfx = false;
+    }
+
     [RequireComponent(typeof(AudioSource))]
     public class AudioManager : SingletonBehaviour<AudioManager>
     {
-        [Header("Settings")] 
-        public bool LoadAllAudio = false;
-        [Header("Music")] 
-        [Range(0f, 1f)] public float MusicVolume;
-        public bool MuteMusic;
-        public string MusicPath;
+        [SerializeField] protected string _audioConfigPath;
+        [field: SerializeField] public AudioConfig AudioConfig { private set; get; }
 
-        [Header("SFX")] 
-        [Range(0f, 1f)] public float SfxVolume;
-        public bool MuteSfx;
-        public string SfxPath;
+        [Header("Settings")]
+        [SerializeField] protected bool DontDestroy = false;
+        [SerializeField] protected bool LoadAllAudio = false;
+        [SerializeField] protected string MusicPath;
+        [SerializeField] protected string SfxPath;
 
         [Header("Components")]
+        [SerializeField] protected AudioSource _audioSource;
         [SerializeField] protected AudioClip[] Musics;
         [SerializeField] protected AudioClip[] Sfxs;
 
-        protected AudioSource audio_source;
+        public string Path => Application.streamingAssetsPath + _audioConfigPath;
 
         protected override void Awake()
         {
             base.Awake();
-            audio_source = GetComponent<AudioSource>();
+            _audioSource = GetComponent<AudioSource>();
+            if (!File.Exists(Path))
+                this.SaveAudioConfig();
+
+            this.LoadAudioConfig();
             if (LoadAllAudio)
             {
                 Musics = ResourceManager.Instance.GetAssets<AudioClip>(MusicPath);
                 Sfxs = ResourceManager.Instance.GetAssets<AudioClip>(SfxPath);
             }
+
+            if(DontDestroy)
+            {
+                DontDestroyOnLoad(this.gameObject);
+            }
+        }
+
+        protected override void InitializeSingleton()
+        {
+            if(_instance != null)
+            {
+                Destroy(_instance.gameObject);
+            }
+            base.InitializeSingleton();
+        }
+
+        public void SaveAudioConfig()
+        {
+            string data = JsonUtility.ToJson(AudioConfig);
+            File.WriteAllText(Path, data);
+        }
+
+        public void LoadAudioConfig()
+        {
+            string data = File.ReadAllText(Path);
+            AudioConfig = JsonUtility.FromJson<AudioConfig>(data);
         }
 
         public virtual void PlayMusic(string name, bool loop)
@@ -44,9 +84,10 @@ namespace TT
             }
             else
             {
-                audio_source.clip = audio;
-                audio_source.loop = loop;
-                audio_source.Play();
+                _audioSource.clip = audio;
+                _audioSource.loop = loop;
+                _audioSource.volume = AudioConfig.MusicVolume;
+                _audioSource.Play();
             }
         }
 
@@ -59,19 +100,19 @@ namespace TT
             }
             else
             {
-                audio_source.PlayOneShot(audio, SfxVolume);
+                _audioSource.PlayOneShot(audio, AudioConfig.SfxVolume);
             }
         }
 
         public virtual void ChangeMusicVolume(float volume)
         {
-            MusicVolume = volume;
-            audio_source.volume = volume;
+            AudioConfig.MusicVolume = volume;
+            _audioSource.volume = volume;
         }
 
         public virtual void ChangeSFXVolume(float volume)
         {
-            SfxVolume = volume;
+            AudioConfig.SfxVolume = volume;
         }
 
         protected AudioClip GetSFXAudio(string name)
@@ -103,6 +144,5 @@ namespace TT
 
             return audio;
         }
-
     }
 }

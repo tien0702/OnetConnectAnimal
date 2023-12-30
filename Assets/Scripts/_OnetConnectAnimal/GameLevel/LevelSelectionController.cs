@@ -5,13 +5,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-[System.Serializable]
-public class GameLevelInfo
-{
-    public double Time;
-    public int[] AnimalIDs;
-}
-
 public class LevelSelectionController : MonoBehaviour
 {
     [SerializeField] Button _levelBtnPrefab;
@@ -32,12 +25,15 @@ public class LevelSelectionController : MonoBehaviour
     {
         GameLevelInfo[] gameLevelInfos = _dal.GetGameLevelInfos();
 
+        Dictionary<Button, int> buttonPropertiy = new Dictionary<Button, int>();
+
         for (int i = 0; i < gameLevelInfos.Length; ++i)
         {
             var levelBtn = Instantiate(_levelBtnPrefab, _content);
             levelBtn.GetComponentInChildren<TextMeshProUGUI>().text = "Level " + (i + 1).ToString();
+            buttonPropertiy.Add(levelBtn, i + 1);
             levelBtn.onClick.AddListener(() => {
-                SelectGameLevel(i);
+                SelectGameLevel(buttonPropertiy[levelBtn]);
             });
         }
 

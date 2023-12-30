@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class GlobalData
 {
-    public static int GameLevel;
+    public static int GameLevel = 1;
 }

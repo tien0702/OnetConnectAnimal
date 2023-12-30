@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class CellInfo
-{
-    public int ID;
-}
-
 public class CellController : MonoBehaviour
 {
-    public CellInfo Info;
+    public int ID;
     public Vector2Int CellPos;
 
-    public virtual bool Init(CellInfo info)
+    protected SpriteRenderer spriteRenderer;
+
+    protected virtual void Awake()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public virtual bool Init(int id)
+    {
+        this.ID = id;
+        spriteRenderer.sprite = AnimalController.Instance.GetAnimalByID(id);
         return true;
     }
 }
