@@ -4211,6 +4211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _resume: {fileID: 1139473308}
   _newGame: {fileID: 580159398}
+  _bestScore: {fileID: 485046923}
 --- !u!1 &1821612844
 GameObject:
   m_ObjectHideFlags: 0
