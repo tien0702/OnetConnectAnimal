@@ -38,18 +38,6 @@ public class GridController : MonoBehaviour
         return true;
     }
 
-    public CellController GetCell(int x, int y)
-    {
-        if (x < 0 || x >= Info.GridSize.x || y < 0 || y >= Info.GridSize.y)
-        {
-            Debug.Log("Out of index");
-            return null;
-        }
-        int index = x * (int)Info.GridSize.y + y;
-
-        return _cells[index];
-    }
-
     public CellController GetCell(Vector2Int pos)
     {
         if (pos.x < 0 || pos.x >= Info.GridSize.x || pos.y < 0 || pos.y >= Info.GridSize.y)

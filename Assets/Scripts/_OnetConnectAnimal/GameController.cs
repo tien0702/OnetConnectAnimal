@@ -25,14 +25,14 @@ public class GameController : SingletonBehaviour<GameController>
 
     protected override void Awake()
     {
-        var buttons = GameObject.FindObjectsOfType<Button>();
+        /*var buttons = GameObject.FindObjectsOfType<Button>();
         foreach (var button in buttons)
         {
             button.onClick.AddListener(() =>
             {
                 AudioManager.Instance.PlaySFX("click");
             });
-        }
+        }*/
 
         _gameLevelDAL = new GameLevelDAL();
     }
@@ -50,6 +50,9 @@ public class GameController : SingletonBehaviour<GameController>
         grid.Events.RegisterEvent(GridAnimalController.GridAnimalEvent.OnClear, OnClearAnimals);
 
         var gridInfo = User.Instance.Data.Grid;
+
+        gridInfo.CellInfos = grid.RandomAnimals(levelInfo);
+        gridInfo.GridSize = new Vector2Int(17, 8);
 
         var result = grid.GridExtend(gridInfo.CellInfos, gridInfo.GridSize);
         gridInfo.GridSize = result.Item1;
@@ -80,10 +83,17 @@ public class GameController : SingletonBehaviour<GameController>
 
     void OnClearAnimals(int id)
     {
+        HUDLayer hudLayer = HUDLayer.Instance;
+        int score = hudLayer.ScoreController.Score + (int)hudLayer.Timer.Seconds * GlobalData.GameLevel;
+        if(User.Instance.Data.BestScore < score)
+        {
+            User.Instance.Data.BestScore = score;
+            User.Instance.SaveData();
+        }
         _winPanel.gameObject.SetActive(true);
         _winPanel.ShowEffects();
         _winScore.text
-            = "Score: " + HUDLayer.Instance.ScoreController.Score.ToString();
+            = "Score: " + score.ToString();
         State = GameState.WinState;
     }
 }

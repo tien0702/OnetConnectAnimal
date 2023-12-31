@@ -29,11 +29,16 @@ public class HintController : MonoBehaviour
 
     void UseHint()
     {
-        if(CountHint <= 0)
+        /*var points = _gridAnimal.GetHint();
+        if (CountHint <= 0 && points == null)
         {
             return;
         }
         CountHint -= 1;
         _countTxt.text = CountHint.ToString();
+
+        SelectionController.ResetSelection();
+        SelectionController.Select(_gridAnimal.GetCell(points.Item1), _gridAnimal);
+        SelectionController.Select(_gridAnimal.GetCell(points.Item2), _gridAnimal);*/
     }
 }

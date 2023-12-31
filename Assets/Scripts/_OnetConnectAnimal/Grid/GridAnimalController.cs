@@ -21,11 +21,9 @@ public class GridAnimalController : GridController
     [SerializeField] GameObject _removeEf;
     [SerializeField] string _removeSoundName;
 
-    public GameObject p;
-
-    public void GenerateAnimals(GameLevelInfo gameLevelInfo)
+    public int[] RandomAnimals(GameLevelInfo gameLevelInfo)
     {
-        int[] _cellInfos = new int[base.Info.GridSize.x * base.Info.GridSize.y];
+        int[] animalIDs = new int[base.Info.GridSize.x * base.Info.GridSize.y];
         Dictionary<int, int> countTypes = new Dictionary<int, int>();
         for (int i = 0; i < gameLevelInfo.AnimalIDs; i++)
         {
@@ -42,10 +40,12 @@ public class GridAnimalController : GridController
                 } while (countTypes[type] >= gameLevelInfo.CountIDs[type]);
 
                 int index = x * (int)base.Info.GridSize.y + y;
-                _cellInfos[index] = type;
+                animalIDs[index] = type;
                 countTypes[type]++;
             }
         }
+
+        return animalIDs;
     }
 
     public Tuple<Vector2Int, int[]> GridExtend(int[] cellInfoss, Vector2Int originSize)
@@ -118,8 +118,6 @@ public class GridAnimalController : GridController
                 if (!IsValid(neighbor, size)) continue;
                 if (visited[neighbor.x, neighbor.y]) continue;
                 if (GetCell(neighbor).ID != -1 && !neighbor.Equals(p2)) continue;
-                var node = Instantiate(p, null);
-                node.transform.position = GetCell(neighbor).transform.position;
 
                 visited[neighbor.x, neighbor.y] = true;
                 List<Vector2Int> newPath = new List<Vector2Int>(currentPath) { neighbor };
@@ -166,9 +164,24 @@ public class GridAnimalController : GridController
         return position.x >= 0 && position.x < size.x && position.y >= 0 && position.y < size.y;
     }
 
-    public Vector2Int Hint()
+    public Tuple<Vector2Int, Vector2Int> GetHint()
     {
-        return default(Vector2Int);
+        for(int i = 0; i < Info.CellInfos.Length; ++i)
+        {
+            if (Info.CellInfos[i] == -1) continue;
+
+            for(int j = i + 1; j < Info.CellInfos.Length; j++)
+            {
+                if (Info.CellInfos[j] == Info.CellInfos[i])
+                {
+                    Vector2Int p1 = new Vector2Int(i / Info.GridSize.x, i % Info.GridSize.y);
+                    Vector2Int p2 = new Vector2Int(j / Info.GridSize.x, j % Info.GridSize.y);
+                    var path = FindPath(p1, p2);
+                    if (CountTurns(path) <= 2) return new Tuple<Vector2Int, Vector2Int>(p1, p2);
+                }
+            }
+        }
+        return null;
     }
 
     public void DrawLine(Vector3[] points, Action callbackOnCompleted)
