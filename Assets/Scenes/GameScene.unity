@@ -2206,6 +2206,7 @@ MonoBehaviour:
   _linePrefab: {fileID: 7517822713137770493, guid: a200688876d922749b0a876bfc34d109, type: 3}
   _removeEf: {fileID: 0}
   _removeSoundName: 
+  p: {fileID: 4537649787787076669, guid: 22e0abc6d1bff6d4592327a63ebd4628, type: 3}
 --- !u!1 &1028780512
 GameObject:
   m_ObjectHideFlags: 0

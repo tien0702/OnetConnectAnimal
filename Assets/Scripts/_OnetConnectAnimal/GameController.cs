@@ -48,8 +48,13 @@ public class GameController : SingletonBehaviour<GameController>
 
         var grid = GameObject.FindAnyObjectByType<GridAnimalController>();
         grid.Events.RegisterEvent(GridAnimalController.GridAnimalEvent.OnClear, OnClearAnimals);
-        grid.Init(User.Instance.Data.Grid);
-        grid.GenerateAnimals(levelInfo);
+
+        var gridInfo = User.Instance.Data.Grid;
+
+        var result = grid.GridExtend(gridInfo.CellInfos, gridInfo.GridSize);
+        gridInfo.GridSize = result.Item1;
+        gridInfo.CellInfos = result.Item2;
+        grid.Init(gridInfo);
     }
 
     public void PauseGame()

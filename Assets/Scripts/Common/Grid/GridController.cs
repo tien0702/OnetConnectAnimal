@@ -33,6 +33,7 @@ public class GridController : MonoBehaviour
         if (_cells == null || _cells.Count == 0)
         {
             GenerateGrid();
+            GenerateCellItems();
         }
         return true;
     }
@@ -85,7 +86,7 @@ public class GridController : MonoBehaviour
         _cells[index] = cell;
     }
 
-    protected virtual void GenerateGrid()
+    public virtual void GenerateGrid()
     {
         if (_cells != null && _cells.Count > 0)
         {
@@ -122,7 +123,7 @@ public class GridController : MonoBehaviour
         }
     }
 
-    protected virtual void GenerateCellItems()
+    public virtual void GenerateCellItems()
     {
         for (int i = 0; i < _cells.Count; i++)
         {

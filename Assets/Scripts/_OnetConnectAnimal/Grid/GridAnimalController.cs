@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TT;
 using UnityEngine;
 
@@ -20,17 +21,19 @@ public class GridAnimalController : GridController
     [SerializeField] GameObject _removeEf;
     [SerializeField] string _removeSoundName;
 
+    public GameObject p;
+
     public void GenerateAnimals(GameLevelInfo gameLevelInfo)
     {
-        int[] cellInfos = new int[Info.GridSize.x * Info.GridSize.y];
+        int[] _cellInfos = new int[base.Info.GridSize.x * base.Info.GridSize.y];
         Dictionary<int, int> countTypes = new Dictionary<int, int>();
         for (int i = 0; i < gameLevelInfo.AnimalIDs; i++)
         {
             countTypes.Add(i, 0);
         }
-        for (int x = 0; x < Info.GridSize.x; ++x)
+        for (int x = 0; x < base.Info.GridSize.x; ++x)
         {
-            for (int y = 0; y < Info.GridSize.y; ++y)
+            for (int y = 0; y < base.Info.GridSize.y; ++y)
             {
                 int type = -1;
                 do
@@ -38,22 +41,35 @@ public class GridAnimalController : GridController
                     type = UnityEngine.Random.Range(0, gameLevelInfo.AnimalIDs);
                 } while (countTypes[type] >= gameLevelInfo.CountIDs[type]);
 
-                int index = x * (int)Info.GridSize.y + y;
-                cellInfos[index] = type;
+                int index = x * (int)base.Info.GridSize.y + y;
+                _cellInfos[index] = type;
                 countTypes[type]++;
-                this.GetCell(x, y).Init(type);
+            }
+        }
+    }
+
+    public Tuple<Vector2Int, int[]> GridExtend(int[] cellInfoss, Vector2Int originSize)
+    {
+        Vector2Int newSize = originSize + new Vector2Int(2, 2);
+
+        int[] result = new int[newSize.x * newSize.y];
+
+        for (int i = 0; i < newSize.x; i++)
+        {
+            for (int j = 0; j < newSize.y; j++)
+            {
+                if (i == 0 || i == newSize.x - 1 || j == 0 || j == newSize.y - 1)
+                {
+                    result[i * newSize.y + j] = -1;
+                }
+                else
+                {
+                    result[i * newSize.y + j] = cellInfoss[(i - 1) * originSize.y + (j - 1)];
+                }
             }
         }
 
-        Info.CellInfos = cellInfos;
-    }
-
-    public void GenerateAnimals(int[] animalIDs)
-    {
-        for (int i = 0; i < animalIDs.Length; i++)
-        {
-            _cells[i].Init(animalIDs[i]);
-        }
+        return new Tuple<Vector2Int, int[]>(newSize, result);
     }
 
     public override void RemoveAt(Vector2Int pos)
@@ -75,118 +91,12 @@ public class GridAnimalController : GridController
         }
     }
 
-    /*public Vector2Int[] FindPath(Vector2Int p1, Vector2Int p2)
-    {
-        int[,] e = new int[Info.GridSize.x + 2, Info.GridSize.y + 2];
-        for(int x = 0; x < Info.GridSize.x; ++x)
-        {
-            for(int y = 0; y < Info.GridSize.y; ++y)
-            {
-
-            }
-        }
-
-        //
-
-        // init graph
-
-        Vector2Int size = Info.GridSize + new Vector2Int(2, 2);
-
-        int[,] animalGrid = new int[size.x, size.y];
-
-        for(int x = 0; x < Info.GridSize.x; ++x)
-        {
-            for(int y = 0 ; y < Info.GridSize.y; ++y)
-            {
-                int index = x * (int)Info.GridSize.y + y;
-                animalGrid[x + 1, y+1] = Info.CellInfos[index];
-            }
-        }
-
-        Vector2Int[] searchOrder = new Vector2Int[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down };
-
-        Queue<Vector2Int> queue = new Queue<Vector2Int>();
-
-        Vector2Int startPos = p1 + Vector2Int.one;
-        Vector2Int endPos = p2 + Vector2Int.one;
-
-        Vector2Int[,] trace = new Vector2Int[size.x, size.y];
-        trace[startPos.x, startPos.y] = new Vector2Int(-2, -2);
-        for (int i = 0; i < size.x; ++i)
-        {
-            for(int j = 0 ; j < size.y; ++j)
-            {
-                trace[i, j] = new Vector2Int(-1, -1);
-            }
-        }
-        
-        queue.Enqueue(endPos);
-
-        while(queue.Count > 0)
-        {
-            var u = queue.First();
-            if (u == startPos) break;
-            for(int i = 0; i < trace.Length; ++i)
-            {
-                Vector2Int pos = new Vector2Int(u.x + searchOrder[i].x, u.y + searchOrder[i].y);
-
-                while((pos.x >= 0 && pos.x < size.x) || (pos.y >= 0 && pos.y < size.y) && (animalGrid[pos.x, pos.y] == 0))
-                {
-                    if (trace[pos.x, pos.y].x == -1)
-                    {
-                        trace[pos.x, pos.y] = u;
-                        queue.Enqueue(pos);
-                    }
-                }
-            }
-        }
-
-        // trace back
-
-        List<Vector2Int> res = new List<Vector2Int>();
-        if (trace[startPos.x, startPos.y].x != -1)
-        {
-            while(startPos.x != -2)
-            {
-                res.Add(startPos - Vector2Int.one);
-                startPos = trace[startPos.x, startPos.y];
-            }
-        }
-
-        return res.ToArray();
-    }*/
-
     public Vector2Int[] FindPath(Vector2Int p1, Vector2Int p2)
     {
         Queue<Tuple<Vector2Int, List<Vector2Int>>> queue = new Queue<Tuple<Vector2Int, List<Vector2Int>>>();
         queue.Enqueue(new Tuple<Vector2Int, List<Vector2Int>>(p1, new List<Vector2Int> { p1 }));
 
-        Vector2Int size = Info.GridSize + new Vector2Int(2, 2);
-
-        int[,] animalGrid = new int[size.x, size.y];
-
-        for (int x = 0; x < size.x; ++x)
-            for (int y = 0; y < size.y; ++y)
-                animalGrid[x, y] = -1;
-
-        for (int x = 0; x < Info.GridSize.x; ++x)
-        {
-            for (int y = 0; y < Info.GridSize.y; ++y)
-            {
-                int index = x * (int)Info.GridSize.y + y;
-                animalGrid[x + 1, y + 1] = Info.CellInfos[index];
-            }
-        }
-        /*
-                string s = string.Empty;
-                for (int x = 0; x < size.x; ++x)
-                {
-                    for (int y = 0; y < size.y; ++y)
-                        s += (animalGrid[x, y]).ToString() + ",";
-                    s += "\n";
-                }
-
-                Debug.Log(s);*/
+        Vector2Int size = Info.GridSize;
 
         bool[,] visited = new bool[size.x, size.y];
         visited[p1.x, p1.y] = true;
@@ -197,12 +107,8 @@ public class GridAnimalController : GridController
             Vector2Int currentPosition = current.Item1;
             List<Vector2Int> currentPath = current.Item2;
 
-            if (currentPosition.x == p2.x && currentPosition.y == p2.y)
+            if (currentPosition.Equals(p2))
             {
-                for(int i = 0; i < currentPath.Count; ++i)
-                {
-                    currentPath[i] -= new Vector2Int(-1, -1);
-                }
                 return currentPath.ToArray();
             }
 
@@ -211,9 +117,10 @@ public class GridAnimalController : GridController
             {
                 if (!IsValid(neighbor, size)) continue;
                 if (visited[neighbor.x, neighbor.y]) continue;
-                if (animalGrid[neighbor.x, neighbor.y] != -1) continue;
+                if (GetCell(neighbor).ID != -1 && !neighbor.Equals(p2)) continue;
+                var node = Instantiate(p, null);
+                node.transform.position = GetCell(neighbor).transform.position;
 
-                Debug.Log("ID: " + animalGrid[neighbor.x, neighbor.y].ToString());
                 visited[neighbor.x, neighbor.y] = true;
                 List<Vector2Int> newPath = new List<Vector2Int>(currentPath) { neighbor };
                 queue.Enqueue(new Tuple<Vector2Int, List<Vector2Int>>(neighbor, newPath));
@@ -221,6 +128,25 @@ public class GridAnimalController : GridController
         }
 
         return null;
+    }
+
+    public int CountTurns(Vector2Int[] path)
+    {
+        int numTurns = 0;
+
+        for (int i = 2; i < path.Length; i++)
+        {
+            Vector2Int prev = path[i - 2];
+            Vector2Int curr = path[i - 1];
+            Vector2Int next = path[i];
+
+            if ((curr.x - prev.x) * (next.y - curr.y) != (next.x - curr.x) * (curr.y - prev.y))
+            {
+                numTurns++;
+            }
+        }
+
+        return numTurns;
     }
 
     private List<Vector2Int> GetNeighbors(Vector2Int position)
@@ -239,7 +165,6 @@ public class GridAnimalController : GridController
     {
         return position.x >= 0 && position.x < size.x && position.y >= 0 && position.y < size.y;
     }
-
 
     public Vector2Int Hint()
     {

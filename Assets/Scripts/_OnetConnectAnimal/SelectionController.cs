@@ -64,7 +64,8 @@ public class SelectionController : MonoBehaviour, IOnTouchEnded
 
         //AudioManager.Instance.PlaySFX(_selectSoundName);
 
-        if (_animalSelected.x == NotSelect.x && _animalSelected.y == NotSelect.y)
+        if (_animalSelected.Equals(NotSelect) || 
+            (grid.GetCell(_animalSelected).ID != grid.GetCell(cell.CellPos).ID))
         {
             _animalSelected = cell.CellPos;
             Select(transform, 0);
@@ -73,7 +74,7 @@ public class SelectionController : MonoBehaviour, IOnTouchEnded
             && _animalSelected.y == cell.CellPos.y))
         {
             Vector2Int[] path = grid.FindPath(_animalSelected, cell.CellPos);
-            if ( path == null || !(path.Length >= 2 && path.Length <= 4))
+            if (path == null || (grid.CountTurns(path) > 2))
             {
                 _animalSelected = cell.CellPos;
                 Select(transform, 0);
