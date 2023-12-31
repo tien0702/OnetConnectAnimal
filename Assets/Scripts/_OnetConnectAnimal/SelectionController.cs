@@ -73,7 +73,7 @@ public class SelectionController : MonoBehaviour, IOnTouchEnded
             && _animalSelected.y == cell.CellPos.y))
         {
             Vector2Int[] path = grid.FindPath(_animalSelected, cell.CellPos);
-            if (!grid.CanConnect(_animalSelected, cell.CellPos))
+            if ( path == null || !(path.Length >= 2 && path.Length <= 4))
             {
                 _animalSelected = cell.CellPos;
                 Select(transform, 0);

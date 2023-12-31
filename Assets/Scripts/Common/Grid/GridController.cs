@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 [System.Serializable]
 public class GridInfo
@@ -63,7 +64,7 @@ public class GridController : MonoBehaviour
     public virtual void RemoveAt(Vector2Int pos)
     {
         var cell = this.GetCell(pos);
-        if(cell == null)
+        if (cell == null)
         {
             return;
         }
