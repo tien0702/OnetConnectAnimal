@@ -109,7 +109,7 @@ public class SelectionController : MonoBehaviour, IOnTouchEnded
         if (_cell.ID == -1) return;
         if (GameController.Instance.State != GameController.GameState.InProcess) return;
 
-        //AudioManager.Instance.PlaySFX(_selectSoundName);
+        AudioManager.Instance.PlaySFX(_selectSoundName);
 
         Select(_cell, _grid);
     }

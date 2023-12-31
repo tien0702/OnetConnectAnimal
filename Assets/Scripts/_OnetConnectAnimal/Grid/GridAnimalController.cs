@@ -190,6 +190,7 @@ public class GridAnimalController : GridController
 
         line.positionCount = points.Length;
         line.SetPositions(points);
+        AudioManager.Instance.PlaySFX("linked");
         LeanTween.delayedCall(0.5f, callbackOnCompleted);
         LeanTween.delayedCall(0.5f, () => { Destroy(line.gameObject); });
     }
