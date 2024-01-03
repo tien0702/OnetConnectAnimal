@@ -52,7 +52,7 @@ public class SelectionController : MonoBehaviour, IOnTouchEnded
             && _animalSelected.y == cell.CellPos.y))
         {
             Vector2Int[] path = grid.FindPath(_animalSelected, cell.CellPos);
-            if (path == null || (grid.CountTurns(path) > 2))
+            if (path == null || (GridUtility.CountTurns(path.ToList()) > 2))
             {
                 _animalSelected = cell.CellPos;
                 ShowSelect(cell.transform, SelectionType.FirstSelect);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using TT;
@@ -20,6 +21,8 @@ public class GridAnimalController : GridController
     [SerializeField] LineRenderer _linePrefab;
     [SerializeField] GameObject _removeEf;
     [SerializeField] string _removeSoundName;
+
+    DFS _dfs;
 
     public int[] RandomAnimals(GameLevelInfo gameLevelInfo)
     {
@@ -48,7 +51,7 @@ public class GridAnimalController : GridController
         return animalIDs;
     }
 
-    public Tuple<Vector2Int, int[]> GridExtend(int[] cellInfoss, Vector2Int originSize)
+    public Tuple<Vector2Int, int[]> GridExtend(int[] cellInfos, Vector2Int originSize)
     {
         Vector2Int newSize = originSize + new Vector2Int(2, 2);
 
@@ -64,7 +67,7 @@ public class GridAnimalController : GridController
                 }
                 else
                 {
-                    result[i * newSize.y + j] = cellInfoss[(i - 1) * originSize.y + (j - 1)];
+                    result[i * newSize.y + j] = cellInfos[(i - 1) * originSize.y + (j - 1)];
                 }
             }
         }
@@ -93,94 +96,26 @@ public class GridAnimalController : GridController
 
     public Vector2Int[] FindPath(Vector2Int p1, Vector2Int p2)
     {
-        Queue<Tuple<Vector2Int, List<Vector2Int>>> queue = new Queue<Tuple<Vector2Int, List<Vector2Int>>>();
-        queue.Enqueue(new Tuple<Vector2Int, List<Vector2Int>>(p1, new List<Vector2Int> { p1 }));
+        _dfs = new DFS(GridUtility.ConvertToTwo(Info.CellInfos, Info.GridSize.x, Info.GridSize.y));
+        var paths = _dfs.FindAllPaths(p1, p2);
 
-        Vector2Int size = Info.GridSize;
+        if (paths == null || paths.Count == 0) return null;
 
-        bool[,] visited = new bool[size.x, size.y];
-        visited[p1.x, p1.y] = true;
-
-        while (queue.Count > 0)
+        int index = 0;
+        for (int i = 1; i < paths.Count; ++i)
         {
-            Tuple<Vector2Int, List<Vector2Int>> current = queue.Dequeue();
-            Vector2Int currentPosition = current.Item1;
-            List<Vector2Int> currentPath = current.Item2;
-
-            if (currentPosition.Equals(p2))
+            if (paths[i].Count < paths[index].Count)
             {
-                return currentPath.ToArray();
-            }
-
-            List<Vector2Int> neighbors = GetNeighbors(currentPosition);
-            foreach (Vector2Int neighbor in neighbors)
-            {
-                if (!IsValid(neighbor, size)) continue;
-                if (visited[neighbor.x, neighbor.y]) continue;
-                if (GetCell(neighbor).ID != -1 && !neighbor.Equals(p2)) continue;
-
-                visited[neighbor.x, neighbor.y] = true;
-                List<Vector2Int> newPath = new List<Vector2Int>(currentPath) { neighbor };
-                queue.Enqueue(new Tuple<Vector2Int, List<Vector2Int>>(neighbor, newPath));
+                index = i;
             }
         }
 
-        return null;
-    }
-
-    public int CountTurns(Vector2Int[] path)
-    {
-        int numTurns = 0;
-
-        for (int i = 2; i < path.Length; i++)
-        {
-            Vector2Int prev = path[i - 2];
-            Vector2Int curr = path[i - 1];
-            Vector2Int next = path[i];
-
-            if ((curr.x - prev.x) * (next.y - curr.y) != (next.x - curr.x) * (curr.y - prev.y))
-            {
-                numTurns++;
-            }
-        }
-
-        return numTurns;
-    }
-
-    private List<Vector2Int> GetNeighbors(Vector2Int position)
-    {
-        List<Vector2Int> neighbors = new List<Vector2Int>();
-
-        neighbors.Add(new Vector2Int(position.x - 1, position.y));
-        neighbors.Add(new Vector2Int(position.x + 1, position.y));
-        neighbors.Add(new Vector2Int(position.x, position.y - 1));
-        neighbors.Add(new Vector2Int(position.x, position.y + 1));
-
-        return neighbors;
-    }
-
-    private bool IsValid(Vector2Int position, Vector2Int size)
-    {
-        return position.x >= 0 && position.x < size.x && position.y >= 0 && position.y < size.y;
+        return paths[index].ToArray();
     }
 
     public Tuple<Vector2Int, Vector2Int> GetHint()
     {
-        for(int i = 0; i < Info.CellInfos.Length; ++i)
-        {
-            if (Info.CellInfos[i] == -1) continue;
 
-            for(int j = i + 1; j < Info.CellInfos.Length; j++)
-            {
-                if (Info.CellInfos[j] == Info.CellInfos[i])
-                {
-                    Vector2Int p1 = new Vector2Int(i / Info.GridSize.x, i % Info.GridSize.y);
-                    Vector2Int p2 = new Vector2Int(j / Info.GridSize.x, j % Info.GridSize.y);
-                    var path = FindPath(p1, p2);
-                    if (CountTurns(path) <= 2) return new Tuple<Vector2Int, Vector2Int>(p1, p2);
-                }
-            }
-        }
         return null;
     }
 
