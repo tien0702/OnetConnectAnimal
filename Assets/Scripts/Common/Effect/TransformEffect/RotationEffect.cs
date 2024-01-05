@@ -29,7 +29,7 @@ public class RotationEffect : TTMonoBehaviour, IEffect
         {
             case TransformMode.Local:
                 transform.localEulerAngles = _originRotation;
-                this.RotateLocalTo(_toRotation, () => { callbackOnComplete(this); });
+                this.RotateBy(_toRotation, () => { callbackOnComplete(this); });
                 break;
             case TransformMode.Global:
                 transform.eulerAngles = _originRotation;
@@ -44,7 +44,7 @@ public class RotationEffect : TTMonoBehaviour, IEffect
         switch (_mode)
         {
             case TransformMode.Local:
-                this.RotateLocalTo(_originRotation, () => { callbackOnComplete(this); });
+                this.RotateBy(_originRotation, () => { callbackOnComplete(this); });
                 break;
             case TransformMode.Global:
                 this.RotateTo(_originRotation, () => { callbackOnComplete(this); });

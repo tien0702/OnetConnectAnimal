@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7303816121918980235}
   - component: {fileID: 4159047424567372799}
-  - component: {fileID: -2590180057316858369}
+  - component: {fileID: 2461767203750575840}
   - component: {fileID: 1278537322023728630}
   - component: {fileID: -6125931505588774091}
   - component: {fileID: 9150922559486676452}
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &-2590180057316858369
+--- !u!61 &2461767203750575840
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -112,7 +112,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.625, y: 0.78125}
+  m_Size: {x: 0.85, y: 1.06}
   m_EdgeRadius: 0
 --- !u!114 &1278537322023728630
 MonoBehaviour:
@@ -126,6 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e877d05e96dd54c89b26b56c6ee3a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _time: 0.5
+  _leanTweenType: 28
   ID: 0
   CellPos: {x: 0, y: 0}
 --- !u!114 &-6125931505588774091

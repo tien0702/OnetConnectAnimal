@@ -15,14 +15,5 @@ public class MainMenuController : MonoBehaviour
         User.Instance.SaveData();
 
         AudioManager.Instance.PlayMusic("bg", true);
-
-        var buttons = GameObject.FindObjectsOfType<Button>();
-        foreach (var button in buttons)
-        {
-            button.onClick.AddListener(() =>
-            {
-                AudioManager.Instance.PlaySFX("click");
-            });
-        }
     }
 }

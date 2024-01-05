@@ -29,11 +29,11 @@ public class MovementEffect : TTMonoBehaviour, IEffect
         {
             case TransformMode.Local:
                 transform.localPosition = _originPostion;
-                MoveToLocalPosition(_toPosition, () => { callbackOnComplete(this); });
+                MoveBy(_toPosition, () => { callbackOnComplete(this); });
                 break;
             case TransformMode.Global:
                 transform.position = _originPostion;
-                MoveToPosition(_toPosition, () => { callbackOnComplete(this); });
+                MoveTo(_toPosition, () => { callbackOnComplete(this); });
                 break;
         }
     }
@@ -44,10 +44,10 @@ public class MovementEffect : TTMonoBehaviour, IEffect
         switch (_mode)
         {
             case TransformMode.Local:
-                MoveToLocalPosition(_originPostion, () => { callbackOnComplete(this); });
+                MoveBy(_originPostion, () => { callbackOnComplete(this); });
                 break;
             case TransformMode.Global:
-                MoveToPosition(_originPostion, () => { callbackOnComplete(this); });
+                MoveTo(_originPostion, () => { callbackOnComplete(this); });
                 break;
         }
     }

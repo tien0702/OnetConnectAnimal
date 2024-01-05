@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4533154169283751083}
   - component: {fileID: 4533154169283751080}
   - component: {fileID: 4533154169283751081}
+  - component: {fileID: 7338023396568305709}
   m_Layer: 5
   m_Name: LevelBtn
   m_TagString: Untagged
@@ -122,6 +123,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7338023396568305709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4533154169283751079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c143b9c70f42f429ff057160ea7090, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4533154169993129814
 GameObject:
   m_ObjectHideFlags: 0

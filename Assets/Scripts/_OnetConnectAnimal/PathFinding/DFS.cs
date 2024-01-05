@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class DFS
 {
-    private int[,] grid;
-    private int sizeX, sizeY;
+    private int[,] _grid;
+    private int _sizeX, _sizeY;
 
     public DFS(int[,] grid)
     {
-        this.grid = grid;
-        this.sizeX = grid.GetLength(0);
-        this.sizeY = grid.GetLength(1);
+        this._grid = grid;
+        this._sizeX = grid.GetLength(0);
+        this._sizeY = grid.GetLength(1);
     }
 
     public List<List<Vector2Int>> FindAllPaths(Vector2Int p1, Vector2Int p2)
     {
         List<List<Vector2Int>> allPaths = new List<List<Vector2Int>>();
-        bool[,] visited = new bool[sizeX, sizeY];
+        bool[,] visited = new bool[_sizeX, _sizeY];
         List<Vector2Int> currentPath = new List<Vector2Int>();
 
         FindDFS(p1, p2, currentPath, allPaths, visited);
@@ -65,9 +65,9 @@ public class DFS
 
     bool IsValid(Vector2Int current, Vector2Int destination)
     {
-        if (current.x < 0 || current.x >= sizeX) return false;
-        if (current.y < 0 || current.y >= sizeY) return false;
-        if (grid[current.x, current.y] != -1 && !current.Equals(destination)) return false;
+        if (current.x < 0 || current.x >= _sizeX) return false;
+        if (current.y < 0 || current.y >= _sizeY) return false;
+        if (_grid[current.x, current.y] != -1 && !current.Equals(destination)) return false;
         return true;
     }
 }

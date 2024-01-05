@@ -25,15 +25,6 @@ public class GameController : SingletonBehaviour<GameController>
 
     protected override void Awake()
     {
-        /*var buttons = GameObject.FindObjectsOfType<Button>();
-        foreach (var button in buttons)
-        {
-            button.onClick.AddListener(() =>
-            {
-                AudioManager.Instance.PlaySFX("click");
-            });
-        }*/
-
         _gameLevelDAL = new GameLevelDAL();
     }
 

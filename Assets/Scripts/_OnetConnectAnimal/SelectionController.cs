@@ -29,14 +29,12 @@ public class SelectionController : MonoBehaviour, IOnTouchEnded
         {
             _selections[1].gameObject.SetActive(false);
             _selections[0].gameObject.SetActive(true);
-            _selections[0].SetParent(target);
-            _selections[0].localPosition = Vector3.zero;
+            _selections[0].position = target.transform.position;
         }
         else
         {
             _selections[1].gameObject.SetActive(true);
-            _selections[1].SetParent(target);
-            _selections[1].localPosition = Vector3.zero;
+            _selections[1].position = target.transform.position;
         }
     }
 

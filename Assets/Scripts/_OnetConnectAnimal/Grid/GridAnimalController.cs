@@ -113,12 +113,6 @@ public class GridAnimalController : GridController
         return paths[index].ToArray();
     }
 
-    public Tuple<Vector2Int, Vector2Int> GetHint()
-    {
-
-        return null;
-    }
-
     public void DrawLine(Vector3[] points, Action callbackOnCompleted)
     {
         LineRenderer line = Instantiate<LineRenderer>(_linePrefab);
@@ -128,6 +122,8 @@ public class GridAnimalController : GridController
         AudioManager.Instance.PlaySFX("linked");
         LeanTween.delayedCall(0.5f, callbackOnCompleted);
         LeanTween.delayedCall(0.5f, () => { Destroy(line.gameObject); });
+        float time = 0.5f / (float)(points.Length);
+        LeanTween.value(gameObject, Vector3.zero, Vector3.one, 0.1f);
     }
 
     public Vector3[] ConvertPathToPoints(Vector2Int[] points)
